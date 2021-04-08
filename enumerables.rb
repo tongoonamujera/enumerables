@@ -1,4 +1,5 @@
 module Enumerables
+  
   def my_each
     count = 0
     while count < self.size do
@@ -30,7 +31,7 @@ module Enumerables
   def my_all?(arg = nill, &block)
     if block_given? || arg.nil?
       helper = block_given? ? block : proc {|x| x}
-      my_each {|x| return false if helper.call(x)}
+      my_each() {|x| return false if helper.call(x)}
     else
       my_each {|x| return false if check_pattern?(x, arg)}
     end
@@ -40,28 +41,28 @@ module Enumerables
   def my_any?(arg = nil, &block)
     if block_given? || arg.nil?
       helper = block_given? ? block : proc {|x| x}
-      my_each {|x| return true if helper.call(x)}
+      my_each() {|x| return true if helper.call(x)}
     else
       my_each {|x| return true if check_pattern?(x, arg)}
     end
   false
   end
 
-  def my_none?(arg = nill)
+  def my_none?(arg = nil)
     if block_given?
-      my_each {|y| return false if yield(y)}
+      my_each() {|y| return false if yield(y)}
       return true
     end
     unless arg.nil?
-      my_each {|y| return false check_pattern?(y, arg)}
+      my_each() {|y| return false if check_pattern?(y, arg) }
       return true
     end
     !my_any?
   end
 
-  def my_count(arg = nill, &block)
-    return my_count {|y| y == arg} unless arg.nill?
-    return (my_count {|_y| true}) unless block_given?
+  def my_count(arg = nil, &block)
+    return my_count() {|y| y == arg} unless arg.nil?
+    return (my_count() {|_y| true}) unless block_given?
 
     my_select(&block).length
   end
@@ -75,7 +76,7 @@ module Enumerables
   end
 
   def my_inject(thread, &block)
-    my_each do |item|
+    my_each() do |item|
       thread = block.call(thread, item)
     end
     thread
