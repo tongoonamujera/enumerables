@@ -94,9 +94,9 @@ Use IRB to test the code
 #### #my_inject
 
 ```irb
-(5..10).my_inject(:+)
+Array(5..10).my_inject(:+)
 => 45
-(5..10).my_inject { |sum, n| sum + n }
+Array(5..10).my_inject { |sum, n| sum + n }
 => 45
 ```
 
