@@ -9,7 +9,12 @@ module Enumerables
   end
 
   def my_each_with_index
-    
+    return to_enum unless block_given?
+    my_index = 0
+    for i in self
+      yield i, my_index
+      my_index += 1
+    end
   end
 
   def my_select
@@ -22,16 +27,43 @@ module Enumerables
     my_arr
   end
 
-  def my_all?
+  def my_all?(arg = nill, &block)
+    if block_given? || arg.nil?
+      helper = block_given? ? block : proc {|x| x}
+      my_each {|x| return false if helper.call(x)}
+    else
+      my_each {|x| return false if check_pattern?(x, arg)}
+    end
+  true
   end
 
-  def my_any?
+  def my_any?(arg = nil, &block)
+    if block_given? || arg.nil?
+      helper = block_given? ? block : proc {|x| x}
+      my_each {|x| return true if helper.call(x)}
+    else
+      my_each {|x| return true if check_pattern?(x, arg)}
+    end
+  false
   end
 
-  def my_none?
+  def my_none?(arg = nill)
+    if block_given?
+      my_each {|y| return false if yield(y)}
+      return true
+    end
+    unless arg.nil?
+      my_each {|y| return false check_pattern?(y, arg)}
+      return true
+    end
+    !my_any?
   end
 
-  def my_count
+  def my_count(arg = nill, &block)
+    return my_count {|y| y == arg} unless arg.nill?
+    return (my_count {|_y| true}) unless block_given?
+
+    my_select(&block).length
   end
 
   def my_map(&block)
