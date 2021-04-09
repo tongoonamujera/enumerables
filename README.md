@@ -103,7 +103,8 @@ Array(5..10).my_inject { |sum, n| sum + n }
 #### #multiply_els
 
 ```irb
-[1,2,4,5,6].my_multiply_els
+arr = [1,2,4,5,6]
+multiply_els(arr)
 => 240
 ```
 
