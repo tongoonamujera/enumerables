@@ -75,43 +75,14 @@ module Enumerables
     map_arr
   end
 
-  def my_inject(accumulator = nil, operation = nil, &block)
-    if accumulator.nil? && operation.nil? && block.nil?
-      raise ArgumentError, 'you must provide an operation or a block'
-    end
+  def my_inject(acc = nil, &procs)
+    new_arr = self.dup
+    return acc if empty?
+    acc = new_arr.shift if acc.nil?
 
-    if operation && block
-      raise ArgumentError, 'you must provide either an operation symbol or a block, not both'
-    end
-
-    if operation.nil? && block.nil?
-      operation = accumulator
-      accumulator = nil
-    end
-
-    block = case operation
-      when Symbol
-        -> { |acc, value| acc.send(operation, value) }
-        when nil
-        block
-      else
-        raise ArgumentError, 'the operation provided must be a symbol'
-      end
-
-    if accumulator.nil?
-      ignore_first = true
-      accumulator = first
-    end
-
-    index = 0
-
-    each do |element|
-      unless ignore_first && index.zero?
-        accumulator = block.call(accumulator, element)
-      end
-      index += 1
-    end
-    accumulator
+    acc = procs.call(acc, self.first)
+    new_arr.shift
+    my_inject(acc, &procs)
   end
 
   def multiply_els(array = [])
