@@ -1,12 +1,11 @@
 module Enumerables
 
   def my_each
-    count = 0
-    while count < self.size
-      yield(self[count])
-      count += 1
+    return to_enum unless block_given?
+
+    for index in self
+      yield index
     end
-    self
   end
 
   def my_each_with_index
@@ -19,7 +18,7 @@ module Enumerables
   end
 
   def my_select
-    my_arr = []
+    my_arr = to_a
     count = 0
     while count < self.length
       my_arr << (self[count]) if yield(self[count]) == true
@@ -75,14 +74,28 @@ module Enumerables
     map_arr
   end
 
-  def my_inject(acc = nil, &procs)
-    new_arr = self.dup
-    return acc if empty?
-    acc = new_arr.shift if acc.nil?
+  def my_inject(number = nil, sym = nil)
+    if block_given?
+      accumulator = number
+      my_each { |index| accumulator = accumulator.nil? ? index : yield(accumulator, index) }
+      raise LocalJumpError unless block_given? || !sym.empty? || !number.empty?
 
-    acc = procs.call(acc, self.first)
-    new_arr.shift
-    my_inject(acc, &procs)
+      accumulator
+    elsif !number.nil? && (number.is_a?(Symbol) || number.is_a?(String))
+      raise LocalJumpError unless block_given? || !number.empty?
+
+      accumulator = nil
+      my_each { |index| accumulator = accumulator.nil? ? index : accumulator.send(number, index) }
+      accumulator
+    elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
+      raise LocalJumpError unless block_given? || !sym.empty?
+
+      accumulator = number
+      my_each { |index| accumulator = accumulator.nil? ? index : accumulator.send(sym, index) }
+      accumulator
+    else
+      raise LocalJumpError
+    end
   end
 
   def multiply_els(array = [])
