@@ -3,8 +3,8 @@ module Enumerables
   def my_each
     return to_enum unless block_given?
 
-    for index in self
-      yield index
+    for i in 0..self.length
+      yield(self[i])
     end
   end
 
@@ -18,12 +18,8 @@ module Enumerables
   end
 
   def my_select
-    my_arr = to_a
-    count = 0
-    while count < self.length
-      my_arr << (self[count]) if yield(self[count]) == true
-      count += 1
-    end
+    my_arr = []
+    self.my_each{ |x| my_arr << x if yield(x) }
     my_arr
   end
 
