@@ -23,15 +23,14 @@ module Enumerables
     my_arr
   end
 
-  def my_all?(arg = nil, &block)
-    if block_given? || arg.nil?
-      helper = block_given? ? block : proc { |x| x }
-      my_each { |x| return false if helper.call(x) }
-    else
-      my_each { |x| return false if check_pattern?(x, arg) }
+    def my_all?
+      self.my_each do |index|
+        return true unless block_given?
+        true_false = yield(index)
+        return false unless true_false
+      end
+      true
     end
-  true
-  end
 
   def my_any?(arg = nil, &block)
     if block_given? || arg.nil?
@@ -44,15 +43,10 @@ module Enumerables
   end
 
   def my_none?(arg = nil)
-    if block_given?
-      my_each { |y| return false if yield(y)}
-      return true
+    my_each do |y|
+      return false if block_given? && yield(y) || !block_given? && y
     end
-    unless arg.nil?
-      my_each { |y| return false if check_pattern?(y, arg) }
-      return true
-    end
-    !my_any?
+    true
   end
 
   def my_count(arg = nil, &block)
