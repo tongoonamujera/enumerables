@@ -32,28 +32,39 @@ module Enumerables
       true
     end
 
-  def my_any?(arg = nil, &block)
-    if block_given? || arg.nil?
-      helper = block_given? ? block : proc { |x| x }
-      my_each { |x| return true if helper.call(x) }
-    else
-      my_each { |x| return true if check_pattern?(x, arg) }
+  def my_any?(elem = 0)
+    unless block_given?
+      if elem.instance_of?(Class)
+        my_each { |x| return true if x.is_a? elem }
+      elsif elem.instance_of?(Regexp)
+        my_each { |x| return true if elem.match?(x.to_s) }
+      elsif [nil, false].include?(elem)
+        my_each { |x| return true if x == elem }
+      end
+      return false
     end
-  false
+    my_each { |x| return true if yield(x) }
+    false
   end
 
-  def my_none?(arg = nil)
+  def my_none?
     my_each do |y|
       return false if block_given? && yield(y) || !block_given? && y
     end
     true
   end
 
-  def my_count(arg = nil, &block)
-    return my_count { |y| y == arg} unless arg.nil?
-    return (my_count { |_y| true}) unless block_given?
-
-    my_select(&block).length
+  def my_count(*arg)
+    result = 0
+    unless block_given?
+      if include?(arg)
+        my_each { |x| result += 1 if x == arg }
+        return result
+      end
+      return arg.length
+    end
+    my_each { |x| result += 1 if yield(x) }
+    result
   end
 
   def my_map(&block)
