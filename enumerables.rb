@@ -30,6 +30,7 @@ module Enumerables
         return false unless true_false
       end
       true
+      to_enum
     end
 
   def my_any?(elem = 0)
@@ -52,6 +53,7 @@ module Enumerables
       return false if block_given? && yield(y) || !block_given? && y
     end
     true
+    to_enum
   end
 
   def my_count(*arg)
@@ -73,33 +75,24 @@ module Enumerables
       map_arr.push(block.call(i))
     end
     map_arr
+    to_enum
   end
 
-  def my_inject(number = nil, sym = nil)
-    if block_given?
-      accumulator = number
-      my_each { |index| accumulator = accumulator.nil? ? index : yield(accumulator, index) }
-      raise LocalJumpError unless block_given? || !sym.empty? || !number.empty?
-
-      accumulator
-    elsif !number.nil? && (number.is_a?(Symbol) || number.is_a?(String))
-      raise LocalJumpError unless block_given? || !number.empty?
-
-      accumulator = nil
-      my_each { |index| accumulator = accumulator.nil? ? index : accumulator.send(number, index) }
-      accumulator
-    elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
-      raise LocalJumpError unless block_given? || !sym.empty?
-
-      accumulator = number
-      my_each { |index| accumulator = accumulator.nil? ? index : accumulator.send(sym, index) }
-      accumulator
+  def my_inject(accumulator = nil, operator = nill, &block)
+    if !block
+      if operator.nil?
+        operator = accumulator
+        acumulator = nil
+      end
+      operator.to_sym
+      each { |itm| accumulator = accumulator.nil? ? itm : accumulator.send(operator, itm) }
     else
-      raise LocalJumpError
+      each { |itm| accumulator = accumulator.nil? ? itm : block.call(accumulator, itm) }
     end
+    accumulator
   end
 
   def multiply_els(array = [])
-    array.my_inject { |x, y| x * y }
+    array.my_inject(:*)
   end
 end
