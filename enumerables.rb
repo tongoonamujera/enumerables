@@ -91,8 +91,8 @@ module Enumerables
     end
     accumulator
   end
+end
 
-  def multiply_els(array = [])
-    array.my_inject(:*)
-  end
+def multiply_els(array = [])
+  array.my_inject(:*)
 end
