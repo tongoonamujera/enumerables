@@ -69,27 +69,29 @@ module Enumerables
     result
   end
 
-  def my_map(&block)
-    map_arr = []
-    self.my_each do |i|
-      map_arr.push(block.call(i))
-    end
-    map_arr
+  def my_map
+    mapped_arr = []
+    my_each { |x| mapped_arr << yield(x) if yield(x) != 0 } and return mapped_arr if block_given?
     to_enum
   end
 
-  def my_inject(accumulator = nil, operator = nill, &block)
-    if !block
-      if operator.nil?
-        operator = accumulator
-        acumulator = nil
-      end
-      operator.to_sym
-      each { |itm| accumulator = accumulator.nil? ? itm : accumulator.send(operator, itm) }
+  def my_inject(*arg)
+    new_array = to_a
+    total = arg[0]
+    if arg[0].instance_of?(Symbol)
+      total = new_array[0]
+      new_array = new_array[1..-1]
+      new_array.my_each { |x| total = total.send(arg[0], x) }
+    elsif arg[0].class < Numeric && arg[1].class != Symbol
+      new_array.my_each { |x| total = yield(total, x) }
+    elsif arg[0].class < Numeric && arg[1].instance_of?(Symbol)
+      new_array.my_each { |x| total = total.send(arg[1], x) }
     else
-      each { |itm| accumulator = accumulator.nil? ? itm : block.call(accumulator, itm) }
+      total = new_array[0]
+      new_array = new_array[1..-1]
+      new_array.my_each { |x| total = yield(total, x) }
     end
-    accumulator
+    total
   end
 end
 
