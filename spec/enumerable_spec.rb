@@ -25,3 +25,16 @@ describe '#my_each_with_index' do
     expect(test_array.my_each_with_index).to be_a(Enumerator)
   end
 end
+
+describe '#my_select' do
+  range = Array(1..6)
+  array = []
+  it 'should return an array in accordance to condition in the block when block is given' do
+    range.my_select { |x| array << x if x.odd?}
+    expect(array).to eq([1, 3, 5])
+  end
+
+  it 'should return an enumerator if no block is given' do
+    expect(range.my_each).to be_a(Enumerator)
+  end
+end
