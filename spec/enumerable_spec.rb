@@ -12,3 +12,16 @@ describe '#my_each' do
     expect(range.my_each).to be_a(Enumerator)
   end
 end
+
+describe '#my_each_with_index' do
+  test_array = %w(u v x y z)
+  array = []
+  it 'should return each element according to its index when block is given' do
+    test_array.my_each_with_index { |x, index| array[index] = x }
+    expect(array).to eq(test_array)
+  end
+
+  it 'should return an enumerator if no block is given' do
+    expect(test_array.my_each_with_index).to be_a(Enumerator)
+  end
+end
