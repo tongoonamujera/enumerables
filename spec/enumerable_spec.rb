@@ -78,8 +78,16 @@ describe '#my_all?' do
     expect(range.my_all? { |x| x.is_a?(Integer) }).to eq(true)
   end
 
+  it 'should return true if  condition is met in the block, when block is given' do
+    expect(!range.my_all? { |x| x.is_a?(Integer) }).to eq(false)
+  end
+
   it 'should return true if  condition met in the block, when block is given' do
     expect(range.my_all? { |x| x < 8 }).to eq(true)
+  end
+
+  it 'should return true if  condition met in the block, when block is given' do
+    expect(!range.my_all? { |x| x < 8 }).to eq(false)
   end
 
   it 'should return true if  condition met in the block, when block is given' do
@@ -111,12 +119,20 @@ describe '#my_any?' do
     expect(array.my_any? { |x| x.is_a?(Float) }).to eq(true)
   end
 
+  it 'should return false a negation  of a condition in the block, when block is given' do
+    expect(!array.my_any? { |x| x.is_a?(Float) }).to eq(false)
+  end
+
   it 'should return false if no any element in an array meet the condition in the block, when block is given' do
     expect(range.my_any? { |x| x.is_a?(String) }).to eq(false)
   end
 
   it 'should return true if any element in an array matches the condition in the block, when block is given' do
     expect(range.my_any? { |x| x.is_a?(Integer) }).to eq(true)
+  end
+
+  it 'should return false in a negation of a  condition in the block, when block is given' do
+    expect(!range.my_any? { |x| x.is_a?(Integer) }).to eq(false)
   end
 
   it 'should return an enumerator if no block is given' do
@@ -138,6 +154,10 @@ describe '#my_count' do
 
   it 'should return zero if no any element in an array matching the condition in the block, when block is given' do
     expect(range.my_count { |x| x.is_a?(String) }).to eq(0)
+  end
+
+  it 'should return false in a negationof a condition in the block, when block is given' do
+    expect(!range.my_count { |x| x.is_a?(String) }).to eq(false)
   end
 
   it 'should return the number of element(s) in an array matching the condition in the block, when block is given' do
