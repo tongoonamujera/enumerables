@@ -29,7 +29,6 @@ git clone https://github.com/tongoonamujera/enumerables.git
 
 To get a local copy up and running, follow these simple example steps.
 
-
 1. Open a terminal window and enter `git clone https://github.com/tongoonamujera/enumerables.git`
 2. Make your new cloned directory your active directory
 3. Currently, you are in the "development branch."
